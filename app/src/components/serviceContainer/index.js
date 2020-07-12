@@ -1,32 +1,76 @@
 import React, { useEffect, useState } from 'react';
 import { Header } from '../header';
+import { CurrentDayMain } from '../currentDayMain';
+import { CurrentDayAdvanced } from '../currentDayAdvanced';
 
 export const ServiceContainer = () => {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [item, setItem] = useState({});
+    const [currentDay, setCurrentDay] = useState({});
+    const [forecast, setForecast] = useState({});
 
     useEffect(() => {
         const APIkey = process.env.REACT_APP_API_KEY;
 
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=Paris&units=metric&appid=${APIkey}`)
-            .then(res => res.json())
-            .then(
-                result => {
-                    setIsLoaded(true);
-                    const date = setDate(result.dt)
-                    const infos = {
-                        name: result.name,
-                        date: date
-                    }
-                    setItem(infos)
-                },
-                error => {
-                    setIsLoaded(true);
-                    setError(error);
+        Promise.all([
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=Paris&units=metric&appid=${APIkey}`).then(resp => resp.json()),
+            fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Paris&units=metric&cnt=5&appid=${APIkey}`).then(resp => resp.json()),
+        ]).then(result => {
+            setIsLoaded(true);
+
+            const date = setDate(result[0].dt)
+            const sunrise = setSunInfos(result[0].sys.sunrise);
+            const sunset = setSunInfos(result[0].sys.sunset);
+            const mainInfos = {
+                name: result[0].name,
+                date,
+                icon: result[0].weather[0].icon,
+                desc: result[0].weather[0].description,
+                temp: result[0].main.temp,
+                advanced: {
+                    high: result[0].main.temp_max,
+                    low: result[0].main.temp_min,
+                    wind: result[0].wind.speed,
+                    humidity: result[0].main.humidity,
+                    sunrise,
+                    sunset
                 }
-            )
+            }
+
+            const t = result[1].list.map(({ dt, weather, main }) => (
+                {
+                    date: setDate(dt),
+                    icon: weather[0].icon,
+                    advanced: {
+                        high: main.temp_max,
+                        low: main.temp_min,
+                    }
+                }
+            ));
+
+            console.log(t)
+
+            setCurrentDay(mainInfos)
+            setForecast(forecast)
+        },
+            error => {
+                setIsLoaded(true);
+                setError(error);
+            })
     }, [])
+
+    const setSunInfos = (ts) => {
+        const addZero = i => {
+            i < 10 && (i = "0" + i);
+
+            return i;
+        }
+
+        const date = new Date(ts * 1000);
+        const time = `${addZero(date.getHours())}:${addZero(date.getMinutes())}`
+
+        return time;
+    }
 
     const setDate = (ts) => {
         const date = new Date(ts * 1000);
@@ -56,7 +100,9 @@ export const ServiceContainer = () => {
 
     return (
         <div className="cmp-service-container">
-            <Header city={item.name} date={item.date}/>
+            <Header city={currentDay.name} date={currentDay.date} />
+            <CurrentDayMain desc={currentDay.desc} icon={currentDay.icon} temp={currentDay.temp} />
+            <CurrentDayAdvanced {...currentDay.advanced} />
         </div>
     );
 }
