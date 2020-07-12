@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Header } from '../header';
 import { CurrentDayMain } from '../currentDayMain';
 import { CurrentDayAdvanced } from '../currentDayAdvanced';
+import { ForeCast } from '../forecast';
 
 export const ServiceContainer = () => {
     const [error, setError] = useState(null);
@@ -14,13 +15,13 @@ export const ServiceContainer = () => {
 
         Promise.all([
             fetch(`https://api.openweathermap.org/data/2.5/weather?q=Paris&units=metric&appid=${APIkey}`).then(resp => resp.json()),
-            fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Paris&units=metric&cnt=5&appid=${APIkey}`).then(resp => resp.json()),
+            fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Paris&units=metric&appid=${APIkey}`).then(resp => resp.json()),
         ]).then(result => {
             setIsLoaded(true);
 
             const date = setDate(result[0].dt)
-            const sunrise = setSunInfos(result[0].sys.sunrise);
-            const sunset = setSunInfos(result[0].sys.sunset);
+            const sunrise = setTime(result[0].sys.sunrise);
+            const sunset = setTime(result[0].sys.sunset);
             const mainInfos = {
                 name: result[0].name,
                 date,
@@ -37,18 +38,14 @@ export const ServiceContainer = () => {
                 }
             }
 
-            const t = result[1].list.map(({ dt, weather, main }) => (
-                {
+            const forecast = result[1].list.map(({ dt, weather, main }) => {
+               return {
                     date: setDate(dt),
+                    time: setTime(dt),
                     icon: weather[0].icon,
-                    advanced: {
-                        high: main.temp_max,
-                        low: main.temp_min,
-                    }
+                    temp: main.temp_max
                 }
-            ));
-
-            console.log(t)
+            });
 
             setCurrentDay(mainInfos)
             setForecast(forecast)
@@ -59,7 +56,7 @@ export const ServiceContainer = () => {
             })
     }, [])
 
-    const setSunInfos = (ts) => {
+    const setTime = (ts) => {
         const addZero = i => {
             i < 10 && (i = "0" + i);
 
@@ -101,8 +98,14 @@ export const ServiceContainer = () => {
     return (
         <div className="cmp-service-container">
             <Header city={currentDay.name} date={currentDay.date} />
+            
             <CurrentDayMain desc={currentDay.desc} icon={currentDay.icon} temp={currentDay.temp} />
+            
             <CurrentDayAdvanced {...currentDay.advanced} />
+            
+            { forecast.length && forecast.map(item => (
+                <ForeCast { ...item } />
+            ) ) }
         </div>
     );
 }
