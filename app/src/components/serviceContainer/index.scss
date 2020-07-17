@@ -2,7 +2,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
     flex-wrap: wrap;
 
     &__form {
@@ -11,6 +10,8 @@
         align-items: center;
         flex-basis: 50%;
         position: relative;
+        margin-top: 45vh;
+        transition: all 0.6s;
 
         input {
             flex-basis: 100%;
@@ -25,6 +26,60 @@
             position: absolute;
             left: 22px;
             font-size: 20px;
+        }
+    }
+
+    &.loaded {
+        .cmp-service-container__form {
+            margin-top: 5vh;
+        }
+    }
+
+    .cmp-service-container__forcastcontainer {
+        display: flex;
+        overflow-x: scroll;
+        background-color: rgba($color: #000, $alpha: 0.1);
+        margin-top: 50px;
+        opacity: 0;
+
+        @media screen and (min-width: 768px) {
+            margin-top: 150px;
+        }
+
+        > :nth-child( odd ) {
+            background-color: rgba($color: #000, $alpha: 0.8);
+            color: white;
+        }
+    }
+
+    &--error {
+        display: flex;
+        flex-basis: 100%;
+        justify-content: center;
+        margin-top: 25vh;
+        font-size: 30px;
+        letter-spacing: 3px;
+    }
+
+    &.appearing {
+        .cmp-header,
+        .cmp-currentDayMain,
+        .cmp-currentDayAdvanced,
+        .cmp-service-container__forcastcontainer {
+            opacity: 1;
+            transition: all 0.5s;
+        }
+
+        .cmp-currentDayMain {
+            transition-delay: 0.2s;
+        }
+
+        .cmp-currentDayAdvanced {
+            transition-delay: 0.4s;
+        }
+
+        .cmp-service-container__forcastcontainer {
+            transition-delay: 0.6s;
         }
     }
 }

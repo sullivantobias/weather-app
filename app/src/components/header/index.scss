@@ -1,4 +1,12 @@
 .cmp-header {
     flex-basis: 100%;
     text-align: center;
+    background-color: rgba($color: #000, $alpha: 0.5);
+    color: white;
+    margin-top: 30px;
+    opacity: 0;
+
+    @media screen and (min-width: 768px) {
+        margin-top: 50px;
+    }
 }
