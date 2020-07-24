@@ -59,7 +59,7 @@ export const ServiceContainer = () => {
                             sunrise,
                             sunset
                         }
-                    }
+                    };
 
                     const { main } = result[0].weather[0];
 
@@ -115,7 +115,7 @@ export const ServiceContainer = () => {
         const time = `${ addZero(date.getHours()) }:${ addZero(date.getMinutes()) }`
 
         return time;
-    }
+    };
 
     const setDate = (ts) => {
         const date = new Date(ts * 1000);
@@ -145,7 +145,7 @@ export const ServiceContainer = () => {
 
     return (
         <div className={ `cmp-service-container ${ city ? 'loaded' : '' } ${ appearing ? 'appearing' : '' }` }>
-
+            <h1 className={ 'cmp-service-container--title' }>Enjoy the app</h1>
             <form className={ `cmp-service-container__form` } onSubmit={ e => {
                 e.preventDefault();
                 setCity(textInput.current.value);
@@ -165,7 +165,7 @@ export const ServiceContainer = () => {
                             currentDay.advanced && <CurrentDayAdvanced { ...currentDay.advanced } />
 
                             }
-                            <div className={'cmp-service-container__forcastcontainer'}>
+                            <div className={ 'cmp-service-container__forcastcontainer' }>
                                 { forecast.length && forecast.map((item, i) => (
                                     <ForeCast key={ i } { ...item } />
                                 )) }
