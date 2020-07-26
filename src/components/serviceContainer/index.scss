@@ -32,8 +32,8 @@
         align-items: center;
         flex-basis: 50%;
         position: relative;
-        margin-top: 45vh;
         transition: all 0.6s;
+        margin-top: 45vh;
 
         input {
             flex-basis: 100%;
@@ -89,6 +89,7 @@
 
     &--error {
         display: flex;
+        height: 100vh;
         flex-basis: 100%;
         justify-content: center;
         margin-top: 25vh;

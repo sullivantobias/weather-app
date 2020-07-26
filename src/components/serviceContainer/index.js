@@ -18,7 +18,7 @@ import {
 
 import './index.scss';
 
-export const ServiceContainer = () => {
+export const ServiceContainer = ({ done = false }) => {
     const [error, setError] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [cityNoFound, setCityNotFound] = useState('');
@@ -32,6 +32,7 @@ export const ServiceContainer = () => {
 
     useEffect(() => {
         const APIkey = process.env.REACT_APP_API_KEY;
+        done(false);
 
         city && Promise.all([
             fetch(`https://api.openweathermap.org/data/2.5/weather?q=${ city }&units=metric&appid=${ APIkey }`).then(resp => resp.json()),
@@ -90,7 +91,10 @@ export const ServiceContainer = () => {
 
                     setCurrentDay(mainInfos);
                     setForecast(forecast);
-                    setTimeout(() => setLoaded(true), 1000);
+                    setTimeout(() => {
+                        done(true);
+                        setLoaded(true)
+                    }, 1000);
                     setTimeout(() => setAppearing(true), 1100)
                 } else {
                     setLoaded(true);
